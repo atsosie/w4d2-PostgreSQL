@@ -15,21 +15,18 @@ client.connect((err) => {
     return console.error("Connection Error", err);
   }
 
-  if (process.argv !== 3) {
+  if (process.argv.length !== 3) {
     console.log("Usage: node lookup_people.js <name>");
     process.exit(1);
   }
 
   const lookupName = process.argv[2];
-  // console.log("name given =", lookupName);
 
-  client.query("SELECT * FROM famous_people WHERE first_name LIKE $1::text OR last_name LIKE $1::text", [lookupName], (err, queryResult) => {
+  client.query("SELECT id, first_name, last_name, to_char(birthdate, 'YYYY-MM-DD') birthdate FROM famous_people WHERE first_name = $1::text OR last_name = $1::text", [lookupName], (err, queryResult) => {
 
     if (err) {
       return console.error("error running query", err);
     }
-
-    // console.log("queryResult.rows =\n", queryResult.rows);
 
     function logOutputHeader(queryResult) {
       console.log("Searching ...");
