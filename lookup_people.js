@@ -15,11 +15,19 @@ client.connect((err) => {
     return console.error("Connection Error", err);
   }
 
-  client.query("SELECT * FROM famous_people WHERE first_name LIKE 'Lincoln' OR last_name LIKE 'Lincoln'", (err, queryResult) => {
+  const lookupName = process.argv[2];
+  console.log("name given =", lookupName);
+
+  client.query("SELECT * FROM famous_people WHERE first_name LIKE $1::text OR last_name LIKE $1::text", [lookupName], (err, queryResult) => {
 
     if (err) return console.error("error running query", err);
 
-    console.log("queryResult.rows =\n", queryResult.rows);
+    // console.log("queryResult.rows =\n", queryResult.rows);
+
+    function logOutputHeader(queryResult) {
+      console.log("Searching ...");
+      console.log(`Found ${queryResult.rows.length} person(s) by the name '${lookupName}'`);
+    }
 
     function logPersonInfo(queryResult) {
       for (idx in queryResult.rows) {
@@ -33,18 +41,9 @@ client.connect((err) => {
       }
     }
 
-    console.log("Searching ...");
-    console.log(`Found ${queryResult.rows.length} person(s) by the name 'Lincoln':\n`);
+    logOutputHeader(queryResult);
     logPersonInfo(queryResult);
 
     client.end();
   });
 });
-
-
-
-//--------------------------------
-// const person = process.argv[2];
-// console.log("name given =", person);
-
-//SELECT * FROM famous_people WHERE name LIKE '${person}%' OR name LIKE '%${person}'
