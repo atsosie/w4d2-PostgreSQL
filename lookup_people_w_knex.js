@@ -1,4 +1,5 @@
 const settings = require("./settings"); // settings.json
+
 const connection = {
   user     : settings.user,
   password : settings.password,
@@ -14,7 +15,14 @@ const knex = require("knex")({
   searchPath: "knex,public"
 });
 
+
+if (process.argv.length !== 3) {
+  console.log("Usage: node lookup_people_w_knex.js <name>");
+  process.exit(1);
+}
+
 const lookupName = process.argv[2];
+
 
 knex.select('id', 'last_name', 'first_name', 'birthdate')
     .from('famous_people')
