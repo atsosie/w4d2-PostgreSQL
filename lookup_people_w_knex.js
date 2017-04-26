@@ -41,7 +41,6 @@ knex.select('id', 'last_name', 'first_name', 'birthdate')
     let person = result[idx];
     console.log("- " + person.id + ": " + person.first_name + " " + person.last_name + ", born  " + person.birthdate);
   }
-
-  knex.destroy(function () {});
 });
 
+knex.destroy();
